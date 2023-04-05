@@ -25,20 +25,18 @@ function reducer(state,{ type, payload}) {
 			if((state.currentOperand!=undefined) && (payload.digit === "." && state.currentOperand.includes("."))) {
 				return state;
 			}
-			if((state.operation==null) && (state.previousOperand!=null)) {
-				return {
-					...state,
-					previousOperand:state.currentOperand,
-					currentOperand: payload.digit
-				}
-			}
 			if((state.operation!=null)) {
 				return {
 					...state,
-					previousOperand: evaluate(state,payload.digit),
-					operation: null, 
-					currentOperand: null,
-					overwrite: true
+					currentOperand: `${state.currentOperand || ''}${payload.digit}`,
+					previousOperand: state.previousOperand,
+				}	
+			}
+			if((state.operation==null)) {
+				return {
+					...state,
+					currentOperand: `${state.currentOperand || ''}${payload.digit}`,
+					previousOperand: state.previousOperand,
 				}	
 			}
 			return {
@@ -66,7 +64,7 @@ function reducer(state,{ type, payload}) {
 				operation: payload.operation,
 				previousOperand: evaluate(state), 
 				currentOperand: null
-		}
+			}
 		case ACTIONS.CLEAR:
 		return {}
 		case ACTIONS.DELETE_DIGIT:
@@ -90,9 +88,15 @@ function reducer(state,{ type, payload}) {
 				currentOperand:state.currentOperand.slice(0,-1)
 		}
 		case ACTIONS.EVALUATE:
-			return state
+			return {
+				...state,
+				operation: payload.operation,
+				previousOperand: evaluate(state), 
+				currentOperand: null,
+				overwrite: true
+			}
+		}
 	}
-}
 const INTEGER_FORMATTER=new Intl.NumberFormat("en-us",{
 	maximumFractionDigits:0,
 })
@@ -159,7 +163,7 @@ function App() {
 			<OperationButton operation="-" dispatch={dispatch}>-</OperationButton>
 			<DigitButton digit="." dispatch={dispatch}>.</DigitButton>
 			<DigitButton digit="0" dispatch={dispatch}>0</DigitButton>
-			<button className="span-two" onClick={()=>dispatch({type: ACTIONS.EVALUATE})}>=</button>
+			<button className="span-two" onClick={()=>dispatch({type: ACTIONS.EVALUATE,payload:operation})}>=</button>
 		</div>
 	)
 }
