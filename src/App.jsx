@@ -14,7 +14,6 @@ export const ACTIONS = {
 function reducer(state,{ type, payload}) {
 	switch (type) {
 		case ACTIONS.ADD_DIGIT:
-			console.log(state.currentOperand)
 			if(state.overwrite){
 				return {
 					...state,
@@ -69,7 +68,7 @@ function reducer(state,{ type, payload}) {
 				currentOperand: null
 		}
 		case ACTIONS.CLEAR:
-			return {}
+		return {}
 		case ACTIONS.DELETE_DIGIT:
 			if(state.overwrite){
 				return {
@@ -106,6 +105,7 @@ function formatOperand(operand) {
 	if(decimal==null){
 		return INTEGER_FORMATTER.format(integer)
 	}
+	return `${INTEGER_FORMATTER.format(integer)}.${decimal}`
 }
 function evaluate({currentOperand, previousOperand, operation},digit='') {
 	let prev = parseFloat(previousOperand);
