@@ -14,10 +14,20 @@ export const ACTIONS = {
 function reducer(state,{ type, payload}) {
 	switch (type) {
 		case ACTIONS.ADD_DIGIT:
+			console.log(state.previousOperand)
+			console.log(state.currentOperand)
+			console.log(state.operation)
+			if((state.previousOperand!=null) && (state.operation==null) && (state.currentOperand==undefined)){
+				return {
+					...state,
+					previousOperand: null,
+					currentOperand: `${state.currentOperand || ''}${payload.digit}`,
+				}
+			}
 			if(state.overwrite){
 				return {
 					...state,
-					currentOperand:payload.digit, 
+					currentOperand: `${state.currentOperand || ''}${payload.digit}`,
 					overwrite:false
 				}
 			}
@@ -32,11 +42,11 @@ function reducer(state,{ type, payload}) {
 					previousOperand: state.previousOperand,
 				}	
 			}
-			if((state.operation==null)) {
+			if((state.operation==null) && (state.previousOperand!=null)) {
 				return {
 					...state,
 					currentOperand: `${state.currentOperand || ''}${payload.digit}`,
-					previousOperand: state.previousOperand,
+					previousOperand: null 
 				}	
 			}
 			return {
